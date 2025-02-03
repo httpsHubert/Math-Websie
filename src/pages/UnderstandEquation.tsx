@@ -1,34 +1,46 @@
-import React, { useState, useEffect } from "react";
-import Input from "../InpuComponent/input";
+import { useState, useEffect } from "react";
+import Input from "../essential-components/input";
 import FunctionPlot from "../backend/function-plot";
-import Button from "../Button";
+import Button from "../essential-components/Button";
 import { calculateDerivative } from "../backend/calculations";
-import { generateResponse } from "../backend/gemini-api";
-import AiResponse from "./ai-response";
-
+import AiResponse from "../essential-components/ai-response";
+import * as math from "mathjs";
 
 const UnderstandEquation = () => {
-    const [isSent, setIsSent] = useState(false)
-    const [func, setFunc] = useState("")
+    const [isSent, setIsSent] = useState(false);
+    const [func, setFunc] = useState("");
+    const [derivative, setDerivative] = useState("");
+    const [chartWidth, setChartWidth] = useState(window.innerWidth >= 1700 ? 800 : 500);
 
-    const functionDerivative = calculateDerivative(func, "x")
+    useEffect(() => {
+        const handleResize = () => {
+            setChartWidth(window.innerWidth >= 1700 ? 700 : 500);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const handleButtonClick = () => {
-        const inputElement = document.querySelector("#function") as HTMLInputElement;
-        
-        setFunc(inputElement.value || "")
-        setIsSent(true)
-    }
+        const inputElement = document.querySelector(
+            "#function"
+        ) as HTMLInputElement;
+        const value = inputElement?.value || "";
 
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
+        try {
+            const parsed = math.parse(value);
+            parsed.compile();
 
-        if (value.toString().includes("^")) {
-            let number = value.replace("^", "<sup>")
-            number += "</sup>"
-            value = number
+            const functionDerivative = calculateDerivative(value, "x");
+            setFunc(value);
+            setDerivative(functionDerivative);
+            setIsSent(true);
+        } catch (error) {
+            console.error("Błąd obliczeń:", error);
+            setDerivative("");
+            setIsSent(false);
         }
-    }
+    };
 
     const prompt = `Od tego momentu mów po polsku. Jesteś profesorem matematyki i twoim zadaniem jest analiza funkcji ${func}.
 Podaj następujące własności w podanym formacie:
@@ -79,56 +91,54 @@ Podaj następujące własności w podanym formacie:
 
 Twoja odpowiedź powinna wyglądać następująco (z wypełnionymi wartościami):
 
-**Dziedzina**  
-\( D = ... \)  
-
-**Zbiór wartości**  
-\( ZW = ... \)  
-
-**Miejsca zerowe**  
-\( x_0 = ... \)  
-
-**Monotoniczność**  
-Funkcja jest ...  
-
-**Różnowartościowość**  
-Funkcja ...  
-
-**Parzystość**  
-Funkcja ...  
-
-**Okresowość**  
-Funkcja ...  
-
-**Różniczkowalność**  
-Funkcja ...  
-
-**Minimum i maksimum**  
-Funkcja ...  
+\( D = ... \)
+\( ZW = ... \)
+\( x_0 = ... \)
+Funkcja jest ... (monotoniczność)
+Funkcja ... (różnowartościowość)
+Funkcja ... (parzystość)
+Funkcja ... (okresowość)
+Funkcja ... (różniczkowalność)
+Funkcja ... (minimum i maksimum)  
 
 Nie podawaj żadnych dodatkowych wyjaśnień ani wstępów, tylko wynik w podanym formacie.`;
 
     return (
-        <div className="w-9/12 mx-auto h-full bg-[#DDDBCB] flex flex-row">
-            <div className="w-6/12">
-                <h1 className="text-3xl">Zrozum funkcję</h1>
+        <div className="w-10/12 mx-auto h-full flex flex-wrap flex-row p-7">
+            <h1 className="text-4xl font-bold text-center mb-4 text-[#252422] w-full">
+                Zrozum funkcję
+            </h1>
+
+            <div className="w-6/12 flex flex-wrap flex-col items-center justify-center gap-7 pt-5">
+                <h1 className="text-3xl font-bold">Zrozum własności</h1>
                 <Input
                     id="function"
                     type="text"
                     name="function"
-                    label="Wpisz nazwę funkcji"
-                    onChange={handleOnChange}
+                    label=""
+                    placeholder="Wpisz wzór funkcji"
                 />
-                <Button type="submit" onClick={handleButtonClick}>
-                    Narysuj funkcję
+
+                <Button type="submit" width="80%" onClick={handleButtonClick}>
+                    Narysuj funkcję i oblicz własności
                 </Button>
-                {(isSent) && (
+
+                {isSent && (
                     <AiResponse type="functionProperties" prompt={prompt} />
                 )}
             </div>
-            <div className="w-6/12">
-                <h1 className="text-3xl">Zrozum zależność</h1>
-                {isSent && <FunctionPlot equation={func} derivative={functionDerivative} yMin={-5} yMax={5} />}
+
+            <div className="w-6/12 flex flex-wrap flex-col items-center gap-7 pt-5">
+                <h1 className="text-3xl font-bold">Zrozum wygląd</h1>
+                {isSent && (
+                    <FunctionPlot
+                        equation={func}
+                        derivative={derivative}
+                        width={chartWidth}
+                        yMin={-5}
+                        yMax={5}
+                    />
+                )}
             </div>
         </div>
     );

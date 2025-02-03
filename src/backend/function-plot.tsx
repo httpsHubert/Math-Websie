@@ -32,9 +32,9 @@ const FunctionPlot: React.FC<Props> = React.memo(({width, height, equation, deri
                 },
             ],
         });
-    }, [equation]);
+    }, [equation, width]);
 
-    return <div ref={plotRef} className="w-full h-[500px]" />;
+    return <div ref={plotRef} />;
 }, () => false) 
 
 export default FunctionPlot;

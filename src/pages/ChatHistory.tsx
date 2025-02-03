@@ -1,34 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeMathjax from "rehype-mathjax";
 
-interface ChatMessage {
-    type: 'user' | 'bot';
+export interface ChatMessage {
+    type: "user" | "bot";
     message: string;
-  }
+}
 
-const ChatHistory = ({ chatHistory }: { chatHistory: ChatMessage[] }) => {
-  return (
-    <>
-      {chatHistory.map((message: any, index: any) => (
-        <div
-          key={index}
-          className={`flex items-start py-2 px-4 rounded-lg ${
-            message.type === "user"
-              ? "bg-gray-100 text-gray-800"
-              : "bg-blue-100 text-blue-800"
-          }`}
-        >
-          {message.type === "user" && (
-            <span className="mr-2 font-bold text-gray-600">You:</span>
-          )}
+interface ChatHistoryProps {
+    chatHistory: ChatMessage[];
+}
 
-          <div className="text-left">
-            <ReactMarkdown>{message.message}</ReactMarkdown>
-          </div>
-        </div>
-      ))}
-    </>
-  );
+const ChatHistory = ({ chatHistory }: ChatHistoryProps) => {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (window.MathJax && chatHistory) {
+                window.MathJax.typesetPromise();
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [chatHistory]);
+
+    return (
+        <>
+            {chatHistory.map((lastChat, index) => (
+                <div
+                    key={index}
+                    className={`flex items-start p-4 rounded-lg mt-5 ${
+                        lastChat.type === "user"
+                            ? "bg-[#0d1b2a] text-[#e0e1dd]"
+                            : "bg-[#415a77] text-[#e0e1dd]"
+                    }`}>
+                    {lastChat.type === "user" && (
+                        <span className="mr-2 font-bold text-[#fffcf2]">
+                            Ty:
+                        </span>
+                    )}
+
+                    {lastChat.type === "bot" && (
+                        <span className="mr-2 font-bold text-[#fffcf2]">
+                            Asystent:
+                        </span>
+                    )}
+
+                    <div className="text-left">
+                        <ReactMarkdown rehypePlugins={[rehypeMathjax]}>
+                            {lastChat.message}
+                        </ReactMarkdown>
+                    </div>
+                </div>
+            ))}
+        </>
+    );
 };
 
 export default ChatHistory;
