@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Input from "../essential-components/input";
 import Button from "../essential-components/Button";
-import Loading from "../essential-components/Loading";
 import AiResponse from "../essential-components/ai-response";
 
 const TestKnowledge = () => {
@@ -9,7 +8,6 @@ const TestKnowledge = () => {
     const [difficulty, setDifficulty] = useState("Łatwy");
     const [numberOfQuestions, setNumberOfQuestions] = useState("5");
     const [visibility, setVisibility] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleButtonClick = () => {
         const mathSectionInput = document.getElementById(

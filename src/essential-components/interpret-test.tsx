@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Loading from "./Loading";
 import Button from "../essential-components/Button";
 
@@ -37,7 +37,7 @@ const InterpretTest = ({ response }: Props) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (window.MathJax && parsedData?.test) {
-                window.MathJax.typesetPromise();
+                (window.MathJax as any).typesetPromise();
             }
         }, 500);
         return () => clearTimeout(timer);

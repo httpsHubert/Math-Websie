@@ -55,8 +55,8 @@ const FunctioProperties = ({ response }: Props) => {
     }, [response]);
 
     useEffect(() => {
-        if (window.MathJax && properties.length > 0) {
-            window.MathJax.typesetPromise();
+        if (window.MathJax) {
+            (window.MathJax as any).typesetPromise();
         }
     }, [properties]);
 

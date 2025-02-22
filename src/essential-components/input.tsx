@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState, useEffect } from "react";
+import React, { InputHTMLAttributes, useState } from "react";
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
     name: string;

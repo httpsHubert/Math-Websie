@@ -42,7 +42,7 @@ const AiResponse = ({ type, prompt, ...props }: Props) => {
 
     useEffect(() => {
         if (window.MathJax) {
-            window.MathJax.typesetPromise();
+            (window.MathJax as any).typesetPromise();
         }
     }, [aiResponse]);
 

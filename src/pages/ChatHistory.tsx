@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import remarkMath from "remark-math";
 import rehypeMathjax from "rehype-mathjax";
 
 export interface ChatMessage {
@@ -16,7 +15,7 @@ const ChatHistory = ({ chatHistory }: ChatHistoryProps) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (window.MathJax && chatHistory) {
-                window.MathJax.typesetPromise();
+                (window.MathJax as any).typesetPromise();
             }
         }, 500);
         return () => clearTimeout(timer);

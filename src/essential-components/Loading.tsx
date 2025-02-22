@@ -10,10 +10,8 @@ const Loading = ({ isLoading }: Props) => {
             {isLoading && (
                 <div className="flex items-center justify-center mt-2">
                     <InfinitySpin
-                        visible={true}
                         width="200"
                         color="#0d1b2a"
-                        ariaLabel="infinity-spin-loading"
                     />
                 </div>
             )}
