@@ -43,7 +43,7 @@ const TestKnowledge = () => {
     }
     7. KAŻDY backslash w LaTeXu musi być podwojony (np. \\\sqrt → \\\\sqrt)
     8. KAŻDY element JSONA powinien być opatrzony w "", każdy klucz i każda wartość
-    9. Każdą odpowiedź opatul w $ odpowiedź $
+    9. Każdą odpowiedź zarówno jak i pytanie opatul w $ odpowiedź $
 
     Przykładowa struktura z prawidłowym escapowaniem:
     {
